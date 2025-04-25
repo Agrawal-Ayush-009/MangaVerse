@@ -23,6 +23,10 @@
 
 https://github.com/user-attachments/assets/ff7f5ffe-6ccd-49da-bc3f-d38f2dbe2612
 
+## APK
+
+[APK Release](https://github.com/Agrawal-Ayush-009/MangaVerse/releases/tag/v1.0.0)
+
 
 ## Tech used
 - Kotlin
