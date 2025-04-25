@@ -4,8 +4,10 @@ import androidx.paging.ExperimentalPagingApi
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.RemoteMediator
 import androidx.paging.map
 import com.flatify.mangaverse.data.local.dao.MangaDao
+import com.flatify.mangaverse.data.local.dao.RemoteKeysDao
 import com.flatify.mangaverse.data.local.database.AppDatabase
 import com.flatify.mangaverse.data.local.entity.MangaEntity
 import com.flatify.mangaverse.data.remote.api.MangaAPI
@@ -22,33 +24,22 @@ import javax.inject.Inject
 class MangaRepositoryImp @Inject constructor(
     private val api: MangaAPI,
     private val mangaDao: MangaDao,
-    private val db: AppDatabase
+    private val remoteKeysDao: RemoteKeysDao,
 ) : MangaRepository {
 
-    override fun getManga(): Flow<PagingData<MangaData>> = Pager(
+    @OptIn(ExperimentalPagingApi::class)
+    override fun getManga(): Flow<PagingData<MangaEntity>> = Pager(
         config = PagingConfig(
             pageSize = 25,
             enablePlaceholders = false,
             prefetchDistance = 1
         ),
-        pagingSourceFactory = { MangaPagingSource(api) }
+        remoteMediator = MangaRemoteMediator(
+            mangaDao = mangaDao,
+            remoteKeysDao = remoteKeysDao,
+            api = api
+        ),
+        pagingSourceFactory = {mangaDao.getMangas()}
     ).flow
-
-    override suspend fun cacheManga() {
-        val mangaFlow = getManga()
-        val mangaEntityList = mutableListOf<MangaEntity>()
-        mangaFlow.map { pagingData ->
-            pagingData.map { mangaData ->
-                val mangaEntity = mangaData.toEntity()
-                mangaEntityList.add(mangaEntity)
-            }
-        }
-        db.mangaDao().insertAll(mangaEntityList)
-    }
-
-    override suspend fun getCachedManga(): List<MangaData> {
-        return db.mangaDao().getMangas().map { it.toDomain() }
-    }
-
 
 }

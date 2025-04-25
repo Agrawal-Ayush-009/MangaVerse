@@ -18,15 +18,22 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+
     }
 
     buildTypes {
+        getByName("debug") {
+            buildConfigField("String", "API_KEY", "${property("API_KEY")}")
+        }
         release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+
+            buildConfigField("String", "API_KEY", "${property("API_KEY")}")
         }
     }
     compileOptions {
@@ -38,11 +45,13 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
 
     aaptOptions{
         noCompress("tflite")
     }
+
 }
 
 dependencies {

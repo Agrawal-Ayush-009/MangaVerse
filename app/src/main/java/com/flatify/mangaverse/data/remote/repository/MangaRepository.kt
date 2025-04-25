@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 interface MangaRepository  {
-    fun getManga(): Flow<PagingData<MangaData>>
-    suspend fun cacheManga()
-    suspend fun getCachedManga(): List<MangaData>
+    fun getManga(): Flow<PagingData<MangaEntity>>
+//    suspend fun cacheManga()
+//    suspend fun getCachedManga(): List<MangaData>
 }

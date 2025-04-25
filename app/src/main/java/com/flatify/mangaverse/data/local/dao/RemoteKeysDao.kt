@@ -8,11 +8,11 @@ import com.flatify.mangaverse.data.local.entity.MangaRemoteKeys
 
 @Dao
 interface RemoteKeysDao {
-    @Query("SELECT * FROM remote_keys WHERE mangaId = :id")
+    @Query("SELECT * FROM remote_keys WHERE mangaId ==:id")
     suspend fun getRemoteKey(id: String): MangaRemoteKeys?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(keys: List<MangaRemoteKeys>)
+    suspend fun insertKey(key: MangaRemoteKeys)
 
     @Query("DELETE FROM remote_keys")
     suspend fun clearRemoteKeys()

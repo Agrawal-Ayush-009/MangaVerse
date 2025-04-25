@@ -10,7 +10,7 @@ import com.flatify.mangaverse.data.local.entity.MangaEntity
 @Dao
 interface MangaDao {
     @Query("SELECT * FROM manga")
-    fun getMangas(): List<MangaEntity>
+    fun getMangas(): PagingSource<Int, MangaEntity>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAll(items: List<MangaEntity>)
 

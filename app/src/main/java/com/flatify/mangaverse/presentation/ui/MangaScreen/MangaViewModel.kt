@@ -32,29 +32,6 @@ class MangaViewModel @Inject constructor(
 
     val mangaList = repository.getManga().cachedIn(viewModelScope)
 
-    private val _mangaUiState = MutableStateFlow<RoomUiState>(RoomUiState.Idle)
-    val mangaUiState: StateFlow<RoomUiState> = _mangaUiState.asStateFlow()
-    var mangaRoomList = listOf<MangaData>()
-
-    fun cacheManga(){
-        viewModelScope.launch {
-            repository.cacheManga()
-        }
-    }
-
-    fun getCachedManga() {
-        viewModelScope.launch {
-            _mangaUiState.value = RoomUiState.Loading
-            try {
-                val response = repository.getCachedManga()
-                mangaRoomList = response
-                _mangaUiState.value = RoomUiState.Success
-            }catch (e: Exception){
-                _mangaUiState.value = RoomUiState.Error("Something went wrong: ${e.message}")
-            }
-        }
-    }
-
 //    fun isOnline(context: Context): Boolean {
 //        val cm = context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
 //        return cm.activeNetworkInfo?.isConnected == true

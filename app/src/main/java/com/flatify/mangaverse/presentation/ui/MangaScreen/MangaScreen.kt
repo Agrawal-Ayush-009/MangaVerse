@@ -56,27 +56,13 @@ fun MangaScreen(
     onClick: () -> Unit
 ) {
     val mangaList = viewModel.mangaList.collectAsLazyPagingItems()
-    val mangaRoomList = viewModel.mangaRoomList
-    val mangaRoomUi by viewModel.mangaUiState.collectAsState()
+
 
     val isRefreshing = mangaList.loadState.refresh is LoadState.Loading
     val pullRefreshState = rememberPullRefreshState(
         refreshing = isRefreshing,
         onRefresh = { mangaList.refresh() }
     )
-
-    val context = LocalContext.current
-    val isConnected = ObserveNetworkState(context)
-
-    LaunchedEffect(Unit) {
-        if(!isConnected){
-            viewModel.getCachedManga()
-        }
-    }
-
-    LaunchedEffect(mangaList) {
-        viewModel.cacheManga()
-    }
 
     Box(
         modifier = Modifier
@@ -94,138 +80,105 @@ fun MangaScreen(
                 fontFamily = GramatikaTrial
             )
             Spacer(modifier = Modifier.height(20.dp))
-            if(isConnected){
-                LazyColumn(
-                    modifier = Modifier.pullRefresh(pullRefreshState)
-                ) {
-                    items(mangaList.itemCount) { index ->
-                        mangaList[index]?.let {
-                            MangaListItem(
-                                title = it.title,
-                                genre = it.genres[0],
-                                imageUrl = it.thumb,
-                                onClick = {
-                                    sharedViewModel.setSelectedManga(it)
-                                    onClick()
-                                }
-                            )
-                        }
-                    }
 
-                    mangaList.apply {
-                        when (loadState.refresh) {
-                            is LoadState.Loading -> item {
+            LazyColumn(
+                modifier = Modifier.pullRefresh(pullRefreshState)
+            ) {
+                items(mangaList.itemCount) { index ->
+                    mangaList[index]?.let {
+                        MangaListItem(
+                            title = it.title,
+                            status = it.status,
+                            imageUrl = it.thumb,
+                            onClick = {
+                                sharedViewModel.setSelectedManga(it.toDomain())
+                                onClick()
                             }
-                            is LoadState.Error -> item {
-                                Log.d("manga", "error: ${loadState.refresh as LoadState.Error}")
-                                Row(
-                                    modifier = Modifier
-                                        .padding(20.dp, 10.dp, 20.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start
-
-                                ) {
-                                    Image(
-                                        modifier = Modifier
-                                            .padding(end = 4.dp)
-                                            .size(12.dp),
-                                        painter = painterResource(id = R.drawable.lucide_info),
-                                        contentDescription = "trophy",
-                                        alignment = Alignment.Center,
-                                        colorFilter = ColorFilter.tint(color = ErrorRed)
-                                    )
-
-                                    Text(
-                                        text = "Error: ${(loadState.refresh as LoadState.Error).error.localizedMessage}",
-                                        fontSize = 12.sp,
-                                        fontFamily = GramatikaTrial,
-                                        fontWeight = FontWeight.Normal,
-                                        color = ErrorRed
-                                    )
-                                }
-                            }
-                            else -> {}
-                        }
-                        when (loadState.append) {
-                            is LoadState.Loading -> item {
-                                Row(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(20.dp, 10.dp, 20.dp, 10.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Center
-                                ) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(32.dp),
-                                        color = ButtonColor2
-                                    )
-                                }
-                            }
-                            is LoadState.Error -> item {
-                                Row(
-                                    modifier = Modifier
-                                        .padding(20.dp, 10.dp, 20.dp),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    horizontalArrangement = Arrangement.Start
-
-                                ) {
-                                    Image(
-                                        modifier = Modifier
-                                            .padding(end = 4.dp)
-                                            .size(12.dp),
-                                        painter = painterResource(id = R.drawable.lucide_info),
-                                        contentDescription = "trophy",
-                                        alignment = Alignment.Center,
-                                        colorFilter = ColorFilter.tint(color = ErrorRed)
-                                    )
-
-                                    Text(
-                                        text = "Paging Error" ,
-                                        fontSize = 12.sp,
-                                        fontFamily = GramatikaTrial,
-                                        fontWeight = FontWeight.Normal,
-                                        color = ErrorRed
-                                    )
-                                }
-                            }
-                            else -> {}
-                        }
+                        )
                     }
                 }
-            }else{
-                when(mangaRoomUi){
-                    is RoomUiState.Error -> {}
-                    RoomUiState.Idle -> {}
-                    RoomUiState.Loading -> {
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(20.dp, 10.dp, 20.dp, 10.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center
-                        ) {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(32.dp),
-                                color = ButtonColor2
-                            )
+
+                mangaList.apply {
+                    when (loadState.refresh) {
+                        is LoadState.Loading -> item {
                         }
-                    }
-                    RoomUiState.Success -> {
-                        LazyColumn{
-                            items(mangaRoomList.size) { index ->
-                                mangaList[index]?.let {
-                                    MangaListItem(
-                                        title = it.title,
-                                        genre = it.genres[0],
-                                        imageUrl = it.thumb,
-                                        onClick = {
-                                            sharedViewModel.setSelectedManga(it)
-                                            onClick()
-                                        }
-                                    )
-                                }
+
+                        is LoadState.Error -> item {
+                            Log.d("manga", "error: ${loadState.refresh as LoadState.Error}")
+                            Row(
+                                modifier = Modifier
+                                    .padding(20.dp, 10.dp, 20.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .padding(end = 4.dp)
+                                        .size(12.dp),
+                                    painter = painterResource(id = R.drawable.lucide_info),
+                                    contentDescription = "trophy",
+                                    alignment = Alignment.Center,
+                                    colorFilter = ColorFilter.tint(color = ErrorRed)
+                                )
+
+                                Text(
+                                    text = "Error: ${(loadState.refresh as LoadState.Error).error.localizedMessage}",
+                                    fontSize = 12.sp,
+                                    fontFamily = GramatikaTrial,
+                                    fontWeight = FontWeight.Normal,
+                                    color = ErrorRed
+                                )
                             }
                         }
+
+                        else -> {}
+                    }
+                    when (loadState.append) {
+                        is LoadState.Loading -> item {
+                            Row(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(20.dp, 10.dp, 20.dp, 10.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Center
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = ButtonColor2
+                                )
+                            }
+                        }
+
+                        is LoadState.Error -> item {
+                            Row(
+                                modifier = Modifier
+                                    .padding(20.dp, 10.dp, 20.dp),
+                                verticalAlignment = Alignment.CenterVertically,
+                                horizontalArrangement = Arrangement.Start
+
+                            ) {
+                                Image(
+                                    modifier = Modifier
+                                        .padding(end = 4.dp)
+                                        .size(12.dp),
+                                    painter = painterResource(id = R.drawable.lucide_info),
+                                    contentDescription = "trophy",
+                                    alignment = Alignment.Center,
+                                    colorFilter = ColorFilter.tint(color = ErrorRed)
+                                )
+
+                                Text(
+                                    text = "Paging Error",
+                                    fontSize = 12.sp,
+                                    fontFamily = GramatikaTrial,
+                                    fontWeight = FontWeight.Normal,
+                                    color = ErrorRed
+                                )
+                            }
+                        }
+
+                        else -> {}
                     }
                 }
             }
@@ -237,5 +190,6 @@ fun MangaScreen(
             modifier = Modifier.align(Alignment.TopCenter),
             contentColor = ButtonColor2
         )
+
     }
 }

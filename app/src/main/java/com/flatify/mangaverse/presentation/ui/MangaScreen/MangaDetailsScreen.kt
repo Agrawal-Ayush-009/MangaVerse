@@ -165,7 +165,7 @@ fun MangaDetailsScreen(
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Text(
-                            text = "Genre",
+                            text = "Status",
                             fontSize = 16.sp,
                             color = Color.Black,
                             fontFamily = GramatikaTrial,
@@ -173,7 +173,7 @@ fun MangaDetailsScreen(
                         )
                         Text(
                             modifier = Modifier.padding(top = 5.dp),
-                            text = manga.genres[0],
+                            text = manga.status,
                             fontSize = 18.sp,
                             color = Color.Black,
                             fontFamily = GramatikaTrial,

@@ -38,7 +38,7 @@ import com.flatify.mangaverse.presentation.ui.theme.PlaceholderColor
 @Composable
 fun MangaListItem(
     title: String,
-    genre: String,
+    status: String,
     imageUrl: String,
     onClick: () -> Unit
 ) {
@@ -88,14 +88,14 @@ fun MangaListItem(
             )
             Spacer(modifier = Modifier.height(10.dp))
             Text(
-                text = "Genre",
+                text = "Status",
                 fontSize = 14.sp,
                 color = PlaceholderColor,
                 fontWeight = FontWeight.Bold,
                 fontFamily = GramatikaTrial
             )
             Text(
-                text = genre,
+                text = status,
                 fontSize = 16.sp,
                 color = Color.Black,
                 fontWeight = FontWeight.Bold,

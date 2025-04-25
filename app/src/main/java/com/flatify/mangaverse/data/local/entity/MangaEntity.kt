@@ -5,7 +5,8 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "manga")
 data class MangaEntity(
-    @PrimaryKey val id: String,
+    @PrimaryKey (autoGenerate = false)
+    val id: String,
     val title: String,
     val subTitle: String,
     val summary: String,
@@ -13,8 +14,6 @@ data class MangaEntity(
     val type: String,
     val status: String,
     val nsfw: Boolean,
-    val authors: String ,
-    val genres: String,
     val totalChapter: Int,
     val createAt: Long,
     val updateAt: Long

@@ -66,6 +66,7 @@ class NetworkModule {
     }
 
     @Provides
+    @Singleton
     fun provideUserPreferences(@ApplicationContext context: Context): UserPreferences {
         return UserPreferences(context)
     }
