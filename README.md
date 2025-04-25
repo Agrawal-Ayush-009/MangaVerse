@@ -19,6 +19,10 @@
   <img src="https://github.com/Agrawal-Ayush-009/MangaVerse/blob/master/app/src/main/res/drawable/f.jpeg" width="100" height="220">
 </div>
 
+## Video
+
+https://github.com/user-attachments/assets/ff7f5ffe-6ccd-49da-bc3f-d38f2dbe2612
+
 
 ## Tech used
 - Kotlin
